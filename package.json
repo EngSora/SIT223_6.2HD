@@ -1,0 +1,16 @@
+{
+  "name": "blog-platform",
+  "version": "1.0.0",
+  "description": "A simple blog platform built with Node.js and Express.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "echo 'No tests configured'"
+  },
+  "keywords": [],
+  "author": "Your Name",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}

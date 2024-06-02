@@ -1,0 +1,20 @@
+# Deployment configuration for Kubernetes
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: blog-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: blog
+  template:
+    metadata:
+      labels:
+        app: blog
+    spec:
+      containers:
+      - name: blog-container
+        image: blog_app
+        ports:
+        - containerPort: 3000
