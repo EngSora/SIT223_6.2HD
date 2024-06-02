@@ -1,21 +1,23 @@
 pipeline {
     agent any
-    
+
     stages {
         stage('Build') {
             steps {
-                sh 'npm install'
+                bat 'echo Building the application...'
+                bat 'npm install'
             }
         }
         stage('Test') {
             steps {
-                sh 'npm test'
+                bat 'echo Running tests...'
+                bat 'npm test'
             }
         }
         stage('Deploy') {
             steps {
-                sh 'docker build -t blog_app .'
-                sh 'docker run -p 3000:3000 blog_app'
+                bat 'echo Deploying the application...'
+                bat 'docker-compose -f docker-compose.yml up -d'
             }
         }
     }
