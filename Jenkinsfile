@@ -4,20 +4,41 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                bat 'echo Building the application...'
-                bat 'npm install'
+                script {
+                    if (isUnix()) {
+                        sh 'echo Building the application...'
+                        sh 'npm install'
+                    } else {
+                        bat 'echo Building the application...'
+                        bat 'npm install'
+                    }
+                }
             }
         }
         stage('Test') {
             steps {
-                bat 'echo Running tests...'
-                bat 'npm test'
+                script {
+                    if (isUnix()) {
+                        sh 'echo Running tests...'
+                        sh 'npm test'
+                    } else {
+                        bat 'echo Running tests...'
+                        bat 'npm test'
+                    }
+                }
             }
         }
         stage('Deploy') {
             steps {
-                bat 'echo Deploying the application...'
-                bat 'docker-compose -f docker-compose.yml up -d'
+                script {
+                    if (isUnix()) {
+                        sh 'echo Deploying the application...'
+                        sh 'docker-compose -f docker-compose.yml up -d'
+                    } else {
+                        bat 'echo Deploying the application...'
+                        bat 'docker-compose -f docker-compose.yml up -d'
+                    }
+                }
             }
         }
     }
