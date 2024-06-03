@@ -106,7 +106,6 @@ pipeline {
                 }
             }
         }
-
         stage('Monitoring and Alerting') {
             steps {
                 script {
