@@ -9,10 +9,7 @@ RUN npm install
 
 COPY . .
 
-# New Relic setup
-ENV NEW_RELIC_LICENSE_KEY='NRAK-L07EBEGPZXGH6PQTB6AWDG5UXRO'
-ENV NEW_RELIC_APP_NAME='Blog Platform'
-
+# Install New Relic
 RUN npm install newrelic --save
 
 # Add New Relic configuration
