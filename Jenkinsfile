@@ -91,22 +91,23 @@ pipeline {
         }
 stage('Release') {
     steps {
-        // Login to Docker Hub
-        withCredentials([string(credentialsId: 'docker-hub-credentials', variable: 'DOCKER_CREDENTIALS')]) {
+        // Login to Docker Hub using GitHub credentials
+        withCredentials([usernamePassword(credentialsId: 'github-credentials-id', usernameVariable: 'GITHUB_USERNAME', passwordVariable: 'GITHUB_PASSWORD')]) {
             script {
                 if (isUnix()) {
                     sh 'echo Pushing Docker image...'
-                    sh "echo ${DOCKER_CREDENTIALS} | docker login -u engsora --password-stdin"
+                    sh "docker login -u $GITHUB_USERNAME -p $GITHUB_PASSWORD"
                     sh 'docker push engsora/blogplatformpipeline:latest'
                 } else {
                     bat 'echo Pushing Docker image...'
-                    bat "echo ${DOCKER_CREDENTIALS} | docker login -u engsora --password-stdin"
+                    bat "docker login -u %GITHUB_USERNAME% -p %GITHUB_PASSWORD%"
                     bat 'docker push engsora/blogplatformpipeline:latest'
                 }
             }
         }
     }
 }
+
         stage('Monitoring and Alerting') {
             steps {
                 script {
