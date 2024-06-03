@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "start": "node -r newrelic server.js",
-    "test": "echo 'No tests configured'"
+    "test": "jest"
   },
   "keywords": [],
   "author": "Sora",
@@ -13,5 +13,8 @@
   "dependencies": {
     "express": "^4.19.2",
     "newrelic": "^8.6.0"
+  },
+  "devDependencies": {
+    "jest": "^27.0.6"
   }
 }
