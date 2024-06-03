@@ -89,24 +89,24 @@ pipeline {
                 }
             }
         }
-stage('Release') {
-    steps {
-        // Login to Docker Hub
-        withCredentials([string(credentialsId: 'docker-hub-credentials', variable: 'DOCKER_CREDENTIALS')]) {
-            script {
-                if (isUnix()) {
-                    sh 'echo Pushing Docker image...'
-                    sh "echo ${DOCKER_CREDENTIALS} | docker login -u engsora --password-stdin"
-                    sh 'docker push engsora/blogplatformpipeline:latest'
-                } else {
-                    bat 'echo Pushing Docker image...'
-                    bat "echo ${DOCKER_CREDENTIALS} | docker login -u engsora --password-stdin"
-                    bat 'docker push engsora/blogplatformpipeline:latest'
+        stage('Release') {
+            steps {
+                script {
+                    withCredentials([string(credentialsId: 'docker-hub-credentials', variable: 'DOCKER_ACCESS_TOKEN')]) {
+                        if (isUnix()) {
+                            sh 'echo Pushing Docker image...'
+                            sh "docker login -u engsora -p ${DOCKER_ACCESS_TOKEN}"
+                            sh 'docker push engsora/blogplatformpipeline:latest'
+                        } else {
+                            bat 'echo Pushing Docker image...'
+                            bat "docker login -u engsora -p ${DOCKER_ACCESS_TOKEN}"
+                            bat 'docker push engsora/blogplatformpipeline:latest'
+                        }
+                    }
                 }
             }
         }
-    }
-}
+
         stage('Monitoring and Alerting') {
             steps {
                 script {
