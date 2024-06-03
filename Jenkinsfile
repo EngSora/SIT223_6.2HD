@@ -62,6 +62,19 @@ pipeline {
                 }
             }
         }
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    if (isUnix()) {
+                        sh 'echo Building Docker image...'
+                        sh 'docker build -t blogplatformpipeline:latest .'
+                    } else {
+                        bat 'echo Building Docker image...'
+                        bat 'docker build -t blogplatformpipeline:latest .'
+                    }
+                }
+            }
+        }
         stage('Deploy') {
             steps {
                 script {
@@ -79,10 +92,10 @@ pipeline {
             steps {
                 script {
                     if (isUnix()) {
-                        sh 'echo Releasing the application...'
+                        sh 'echo Pushing Docker image...'
                         sh 'docker push blogplatformpipeline:latest'
                     } else {
-                        bat 'echo Releasing the application...'
+                        bat 'echo Pushing Docker image...'
                         bat 'docker push blogplatformpipeline:latest'
                     }
                 }
