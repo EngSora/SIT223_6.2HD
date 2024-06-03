@@ -1,4 +1,4 @@
-version: '3'
+version: '3.8'
 services:
   web:
     image: node:14
@@ -8,3 +8,5 @@ services:
     ports:
       - "3000:3000"
     command: npm start
+    environment:
+      NEW_RELIC_LICENSE_KEY: ${NEW_RELIC_LICENSE_KEY}
