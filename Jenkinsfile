@@ -89,24 +89,48 @@ pipeline {
                 }
             }
         }
-stage('Release') {
-    steps {
-        // Login to Docker Hub using GitHub credentials
-        withCredentials([usernamePassword(credentialsId: 'github-credentials-id', usernameVariable: 'GITHUB_USERNAME', passwordVariable: 'GITHUB_PASSWORD')]) {
-            script {
-                if (isUnix()) {
-                    sh 'echo Pushing Docker image...'
-                    sh "docker login -u $GITHUB_USERNAME -p $GITHUB_PASSWORD"
-                    sh 'docker push engsora/blogplatformpipeline:latest'
-                } else {
-                    bat 'echo Pushing Docker image...'
-                    bat "docker login -u %GITHUB_USERNAME% -p %GITHUB_PASSWORD%"
-                    bat 'docker push engsora/blogplatformpipeline:latest'
+        stage('Release') {
+            steps {
+                // Attempt to login with docker-hub-credentials
+                script {
+                    def loginSuccess = false
+                    withCredentials([string(credentialsId: 'docker-hub-credentials', variable: 'DOCKER_HUB_CREDENTIALS')]) {
+                        try {
+                            if (isUnix()) {
+                                sh 'echo Pushing Docker image...'
+                                sh "echo ${DOCKER_HUB_CREDENTIALS} | docker login -u engsora --password-stdin"
+                            } else {
+                                bat 'echo Pushing Docker image...'
+                                bat "echo ${DOCKER_HUB_CREDENTIALS} | docker login -u engsora --password-stdin"
+                            }
+                            loginSuccess = true
+                        } catch (Exception e) {
+                            echo "Login with docker-hub-credentials failed, trying with docker-cred"
+                        }
+                    }
+                    if (!loginSuccess) {
+                        // Attempt to login with docker-cred as a fallback
+                        withCredentials([usernamePassword(credentialsId: 'docker-cred', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                            if (isUnix()) {
+                                sh 'echo Pushing Docker image...'
+                                sh "echo ${DOCKER_PASSWORD} | docker login -u ${DOCKER_USERNAME} --password-stdin"
+                            } else {
+                                bat 'echo Pushing Docker image...'
+                                bat "echo ${DOCKER_PASSWORD} | docker login -u ${DOCKER_USERNAME} --password-stdin"
+                            }
+                        }
+                    }
+                }
+                // Push Docker image
+                if (loginSuccess) {
+                    if (isUnix()) {
+                        sh 'docker push engsora/blogplatformpipeline:latest'
+                    } else {
+                        bat 'docker push engsora/blogplatformpipeline:latest'
+                    }
                 }
             }
         }
-    }
-}
 
         stage('Monitoring and Alerting') {
             steps {
