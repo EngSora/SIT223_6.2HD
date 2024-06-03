@@ -92,39 +92,14 @@ pipeline {
         stage('Release') {
             steps {
                 script {
-                    def loginSuccess = false
-                    // Attempt to login with docker-hub-credentials
-                    withCredentials([string(credentialsId: 'docker-hub-credentials', variable: 'DOCKER_HUB_CREDENTIALS')]) {
-                        try {
-                            if (isUnix()) {
-                                sh 'echo Pushing Docker image...'
-                                sh "echo ${DOCKER_HUB_CREDENTIALS} | docker login -u engsora --password-stdin"
-                            } else {
-                                bat 'echo Pushing Docker image...'
-                                bat "echo ${DOCKER_HUB_CREDENTIALS} | docker login -u engsora --password-stdin"
-                            }
-                            loginSuccess = true
-                        } catch (Exception e) {
-                            echo "Login with docker-hub-credentials failed, trying with docker-cred"
-                        }
-                    }
-                    // Attempt to login with docker-cred as a fallback
-                    if (!loginSuccess) {
-                        withCredentials([usernamePassword(credentialsId: 'docker-cred', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
-                            if (isUnix()) {
-                                sh 'echo Pushing Docker image...'
-                                sh "echo ${DOCKER_PASSWORD} | docker login -u ${DOCKER_USERNAME} --password-stdin"
-                            } else {
-                                bat 'echo Pushing Docker image...'
-                                bat "echo ${DOCKER_PASSWORD} | docker login -u ${DOCKER_USERNAME} --password-stdin"
-                            }
-                        }
-                    }
-                    // Push Docker image
-                    if (loginSuccess) {
+                    withCredentials([string(credentialsId: 'docker-hub-credentials', variable: 'DOCKER_ACCESS_TOKEN')]) {
                         if (isUnix()) {
+                            sh 'echo Pushing Docker image...'
+                            sh "docker login -u engsora -p ${DOCKER_ACCESS_TOKEN}"
                             sh 'docker push engsora/blogplatformpipeline:latest'
                         } else {
+                            bat 'echo Pushing Docker image...'
+                            bat "docker login -u engsora -p ${DOCKER_ACCESS_TOKEN}"
                             bat 'docker push engsora/blogplatformpipeline:latest'
                         }
                     }
