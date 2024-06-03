@@ -3,11 +3,13 @@ const express = require('express');
 
 const app = express();
 app.get('/', (req, res) => {
-  res.status(200).send('Welcome to the Blog Platform!');
+    res.send('Welcome to the Blog Platform!');
 });
 
-test('GET / responds with "Welcome to the Blog Platform!"', async () => {
-  const response = await request(app).get('/');
-  expect(response.status).toBe(200);
-  expect(response.text).toBe('Welcome to the Blog Platform!');
+describe('GET /', () => {
+    it('should respond with a welcome message', (done) => {
+        request(app)
+            .get('/')
+            .expect('Welcome to the Blog Platform!', done);
+    });
 });
