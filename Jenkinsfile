@@ -5,7 +5,7 @@ pipeline {
         SONARQUBE_URL = 'http://localhost:9000'
         SONARQUBE_PROJECT_KEY = 'blog-platform'
         SONARQUBE_GLOBAL_TOKEN = credentials('sonarqube_global_token')
-        NEWRELIC_LICENSE_KEY = credentials('newrelic_license_key')
+        NEW_RELIC_LICENSE_KEY = 'NRAK-L07EBEGPZXGH6PQTB6AWDG5UXRO'
     }
 
     stages {
@@ -76,10 +76,10 @@ pipeline {
                 script {
                     if (isUnix()) {
                         sh 'echo Releasing the application...'
-                        // Add your release steps here, e.g., pushing Docker image to registry
+                        sh 'docker push blogplatformpipeline:latest'
                     } else {
                         bat 'echo Releasing the application...'
-                        // Add your release steps here, e.g., pushing Docker image to registry
+                        bat 'docker push blogplatformpipeline:latest'
                     }
                 }
             }
@@ -89,10 +89,12 @@ pipeline {
                 script {
                     if (isUnix()) {
                         sh 'echo Setting up New Relic monitoring...'
-                        // Commands to set up New Relic
+                        sh 'npm install -g newrelic'
+                        sh 'newrelic install --licenseKey=$NEW_RELIC_LICENSE_KEY --app_name="Blog Platform"'
                     } else {
                         bat 'echo Setting up New Relic monitoring...'
-                        // Commands to set up New Relic
+                        bat 'npm install -g newrelic'
+                        bat 'newrelic install --licenseKey=$NEW_RELIC_LICENSE_KEY --app_name="Blog Platform"'
                     }
                 }
             }
