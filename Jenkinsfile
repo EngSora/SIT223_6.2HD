@@ -96,17 +96,28 @@ pipeline {
                         if (isUnix()) {
                             sh 'echo Pushing Docker image...'
                             sh "docker login -u engsora -p ${DOCKER_ACCESS_TOKEN}"
-                            sh 'docker push engsora/blogplatformpipeline:latest'
+                            // Check if the Docker image exists locally with the specified tag
+                            def dockerImageExists = sh(script: "docker images engsora/blogplatformpipeline:latest | grep engsora/blogplatformpipeline", returnStatus: true) == 0
+                            if (dockerImageExists) {
+                                sh 'docker push engsora/blogplatformpipeline:latest'
+                            } else {
+                                error 'Docker image does not exist locally. Build the Docker image first.'
+                            }
                         } else {
                             bat 'echo Pushing Docker image...'
                             bat "docker login -u engsora -p ${DOCKER_ACCESS_TOKEN}"
-                            bat 'docker push engsora/blogplatformpipeline:latest'
+                            // Check if the Docker image exists locally with the specified tag
+                            def dockerImageExists = bat(script: "docker images engsora/blogplatformpipeline:latest | findstr engsora/blogplatformpipeline", returnStatus: true) == 0
+                            if (dockerImageExists) {
+                                bat 'docker push engsora/blogplatformpipeline:latest'
+                            } else {
+                                error 'Docker image does not exist locally. Build the Docker image first.'
+                            }
                         }
                     }
                 }
             }
         }
-
         stage('Monitoring and Alerting') {
             steps {
                 script {
