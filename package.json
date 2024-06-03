@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "start": "node -r newrelic server.js",
-    "test": "echo 'No tests configured'"
+    "test": "jest"
   },
   "keywords": [],
   "author": "Sora",
@@ -15,7 +15,12 @@
     "newrelic": "^8.6.0"
   },
   "devDependencies": {
+<<<<<<< HEAD
     "jest": "^29.7.0",
     "supertest": "^7.0.0"
+=======
+    "jest": "^27.0.0",
+    "supertest": "^6.0.0"
+>>>>>>> 38e67d779a2632215c172236b11e53c0c97994b2
   }
 }

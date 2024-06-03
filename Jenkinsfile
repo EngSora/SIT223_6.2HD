@@ -6,12 +6,16 @@ pipeline {
         SONARQUBE_PROJECT_KEY = 'blog-platform'
         SONARQUBE_GLOBAL_TOKEN = credentials('sonarqube_global_token')
         NEW_RELIC_LICENSE_KEY = 'NRAK-L07EBEGPZXGH6PQTB6AWDG5UXRO'
-        // Path to the directory containing the sonar-scanner executable
         SONAR_SCANNER_HOME = 'C:\\Users\\MyDev\\Downloads\\sonar-scanner-cli-5.0.1.3006-windows\\sonar-scanner-5.0.1.3006-windows\\bin'
         DOCKER_HUB_CREDENTIALS = credentials('docker-hub-credentials')
     }
 
     stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
         stage('Build') {
             steps {
                 script {
@@ -96,7 +100,6 @@ pipeline {
                         if (isUnix()) {
                             sh 'echo Pushing Docker image...'
                             sh "docker login -u engsora -p ${DOCKER_ACCESS_TOKEN}"
-                            // Check if the Docker image exists locally with the specified tag
                             def dockerImageExists = sh(script: "docker images engsora/blogplatformpipeline:latest | grep engsora/blogplatformpipeline", returnStatus: true) == 0
                             if (dockerImageExists) {
                                 sh 'docker push engsora/blogplatformpipeline:latest'
@@ -106,7 +109,6 @@ pipeline {
                         } else {
                             bat 'echo Pushing Docker image...'
                             bat "docker login -u engsora -p ${DOCKER_ACCESS_TOKEN}"
-                            // Check if the Docker image exists locally with the specified tag
                             def dockerImageExists = bat(script: "docker images engsora/blogplatformpipeline:latest | findstr engsora/blogplatformpipeline", returnStatus: true) == 0
                             if (dockerImageExists) {
                                 bat 'docker push engsora/blogplatformpipeline:latest'
