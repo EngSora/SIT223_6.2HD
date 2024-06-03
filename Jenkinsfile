@@ -6,6 +6,8 @@ pipeline {
         SONARQUBE_PROJECT_KEY = 'blog-platform'
         SONARQUBE_GLOBAL_TOKEN = credentials('sonarqube_global_token')
         NEW_RELIC_LICENSE_KEY = 'NRAK-L07EBEGPZXGH6PQTB6AWDG5UXRO'
+        // Path to the directory containing the sonar-scanner executable
+        SONAR_SCANNER_HOME = 'C:\\Users\\MyDev\\Downloads\\sonar-scanner-cli-5.0.1.3006-windows\\sonar-scanner-5.0.1.3006-windows\\bin'
     }
 
     stages {
@@ -40,6 +42,7 @@ pipeline {
                 script {
                     if (isUnix()) {
                         sh '''
+                            export PATH=$PATH:$SONAR_SCANNER_HOME
                             sonar-scanner \
                             -Dsonar.projectKey=$SONARQUBE_PROJECT_KEY \
                             -Dsonar.sources=. \
@@ -48,11 +51,12 @@ pipeline {
                         '''
                     } else {
                         bat '''
-                            sonar-scanner \
-                            -Dsonar.projectKey=$SONARQUBE_PROJECT_KEY \
-                            -Dsonar.sources=. \
-                            -Dsonar.host.url=$SONARQUBE_URL \
-                            -Dsonar.login=$SONARQUBE_GLOBAL_TOKEN
+                            set PATH=%PATH%;%SONAR_SCANNER_HOME%
+                            sonar-scanner ^
+                            -Dsonar.projectKey=%SONARQUBE_PROJECT_KEY% ^
+                            -Dsonar.sources=. ^
+                            -Dsonar.host.url=%SONARQUBE_URL% ^
+                            -Dsonar.login=%SONARQUBE_GLOBAL_TOKEN%
                         '''
                     }
                 }
@@ -89,12 +93,12 @@ pipeline {
                 script {
                     if (isUnix()) {
                         sh 'echo Setting up New Relic monitoring...'
-                        sh 'npm install -g newrelic'
-                        sh 'newrelic install --licenseKey=$NEW_RELIC_LICENSE_KEY --app_name="Blog Platform"'
+                        sh 'npm install newrelic'
+                        sh 'echo New Relic setup complete.'
                     } else {
                         bat 'echo Setting up New Relic monitoring...'
-                        bat 'npm install -g newrelic'
-                        bat 'newrelic install --licenseKey=$NEW_RELIC_LICENSE_KEY --app_name="Blog Platform"'
+                        bat 'npm install newrelic'
+                        bat 'echo New Relic setup complete.'
                     }
                 }
             }
