@@ -8,7 +8,7 @@ pipeline {
         NEW_RELIC_LICENSE_KEY = 'NRAK-L07EBEGPZXGH6PQTB6AWDG5UXRO'
         // Path to the directory containing the sonar-scanner executable
         SONAR_SCANNER_HOME = 'C:\\Users\\MyDev\\Downloads\\sonar-scanner-cli-5.0.1.3006-windows\\sonar-scanner-5.0.1.3006-windows\\bin'
-        DOCKER_HUB_CREDENTIALS = credentials('jenkins-example-github-pat')
+        DOCKER_HUB_CREDENTIALS = credentials('docker-hub-credentials')
     }
 
     stages {
