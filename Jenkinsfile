@@ -91,9 +91,9 @@ pipeline {
         }
         stage('Release') {
             steps {
-                // Attempt to login with docker-hub-credentials
                 script {
                     def loginSuccess = false
+                    // Attempt to login with docker-hub-credentials
                     withCredentials([string(credentialsId: 'docker-hub-credentials', variable: 'DOCKER_HUB_CREDENTIALS')]) {
                         try {
                             if (isUnix()) {
@@ -108,8 +108,8 @@ pipeline {
                             echo "Login with docker-hub-credentials failed, trying with docker-cred"
                         }
                     }
+                    // Attempt to login with docker-cred as a fallback
                     if (!loginSuccess) {
-                        // Attempt to login with docker-cred as a fallback
                         withCredentials([usernamePassword(credentialsId: 'docker-cred', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
                             if (isUnix()) {
                                 sh 'echo Pushing Docker image...'
@@ -120,13 +120,13 @@ pipeline {
                             }
                         }
                     }
-                }
-                // Push Docker image
-                if (loginSuccess) {
-                    if (isUnix()) {
-                        sh 'docker push engsora/blogplatformpipeline:latest'
-                    } else {
-                        bat 'docker push engsora/blogplatformpipeline:latest'
+                    // Push Docker image
+                    if (loginSuccess) {
+                        if (isUnix()) {
+                            sh 'docker push engsora/blogplatformpipeline:latest'
+                        } else {
+                            bat 'docker push engsora/blogplatformpipeline:latest'
+                        }
                     }
                 }
             }
