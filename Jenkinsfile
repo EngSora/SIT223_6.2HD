@@ -8,6 +8,7 @@ pipeline {
         NEW_RELIC_LICENSE_KEY = 'NRAK-L07EBEGPZXGH6PQTB6AWDG5UXRO'
         // Path to the directory containing the sonar-scanner executable
         SONAR_SCANNER_HOME = 'C:\\Users\\MyDev\\Downloads\\sonar-scanner-cli-5.0.1.3006-windows\\sonar-scanner-5.0.1.3006-windows\\bin'
+        DOCKER_HUB_CREDENTIALS = credentials('docker-hub-credentials')
     }
 
     stages {
@@ -93,10 +94,12 @@ pipeline {
                 script {
                     if (isUnix()) {
                         sh 'echo Pushing Docker image...'
-                        sh 'docker push blogplatformpipeline:latest'
+                        sh 'docker login -u engsora -p $DOCKER_HUB_CREDENTIALS'
+                        sh 'docker push engsora/blogplatformpipeline:latest'
                     } else {
                         bat 'echo Pushing Docker image...'
-                        bat 'docker push blogplatformpipeline:latest'
+                        bat 'docker login -u engsora -p %DOCKER_HUB_CREDENTIALS%'
+                        bat 'docker push engsora/blogplatformpipeline:latest'
                     }
                 }
             }
